@@ -1,21 +1,47 @@
 import random
-from abc import ABCMeta, abstractmethod
+from collections import OrderedDict
+from copy import deepcopy
 
 import networkx as nx
 import numpy as np
+from networkx import DiGraph
 
 from NetworkUtils import neg_abs, neg_sqrt_abs, neg_square, normalize, sigmoid, sqrt_abs
 from NetworkUtils import vox_xyz_from_id
 
 
+class OrderedGraph(DiGraph):
+    """Create a graph object that tracks the order nodes and their neighbors are added."""
+    node_dict_factory = OrderedDict
+    adjlist_dict_factory = OrderedDict
+
+
 class Network(object):
-    __metaclass__ = ABCMeta
+    """Base class for networks."""
 
-    @abstractmethod
-    def mutate(self, *args, **kwargs): raise NotImplementedError
+    input_node_names = []
 
-    @abstractmethod
-    def express(self, xyz_size, *args, **kwargs): raise NotImplementedError
+    def __init__(self, output_node_names):
+        self.output_node_names = output_node_names
+        self.graph = OrderedGraph()  # preserving order is necessary for checkpointing
+        self.freeze = False
+        self.allow_neutral_mutations = False
+        self.num_consecutive_mutations = 1
+        self.switch = False
+        self.direct_encoding = False
+
+    def __deepcopy__(self, memo):
+        """Override deepcopy to apply to class level attributes"""
+        cls = self.__class__
+        new = cls.__new__(cls)
+        new.__dict__.update(deepcopy(self.__dict__, memo))
+        return new
+
+    def set_input_node_states(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def mutate(self, *args, **kwargs):
+        raise NotImplementedError
 
 
 class CPPN(Network):
@@ -23,13 +49,12 @@ class CPPN(Network):
     activation_functions = [np.sin, np.abs, neg_abs, np.square, neg_square, sqrt_abs, neg_sqrt_abs]
 
     def __init__(self, output_node_names):
-        self.output_node_names = output_node_names
-        self.graph = nx.DiGraph()
+        Network.__init__(self, output_node_names)
         self.set_minimal_graph()
-        self.mutate()
+        self.initialize()
 
     def __str__(self):
-        return "CPPN consisting of:\nNodes: " + str(self.graph.nodes(data=True)) + "\nEdges: " + str(self.graph.edges(data=True))
+        return "CPPN consisting of:\nNodes: " + str(self.graph.nodes()) + "\nEdges: " + str(self.graph.edges())
 
     def set_minimal_graph(self):
         for name in self.input_node_names:
@@ -40,23 +65,6 @@ class CPPN(Network):
         for input_node in (node[0] for node in self.graph.nodes(data=True) if node[1]["type"] == "input"):
             for output_node in (node[0] for node in self.graph.nodes(data=True) if node[1]["type"] == "output"):
                 self.graph.add_edge(input_node, output_node, weight=0.0)
-
-    def express(self, xyz_size=(1, 1, 1), *args, **kwargs):
-        for name in self.graph.nodes():
-            self.graph.nodes[name]["evaluated"] = False
-        self.set_input_node_states(xyz_size)
-
-        new_shape = [len(self.output_node_names)]
-        new_shape += list(xyz_size)
-        vals_to_return = np.zeros(shape=new_shape)
-
-        for n, name in enumerate(self.output_node_names):
-            self.graph.nodes[name]["state"] = np.zeros(xyz_size)  # clear old output state.
-            node_state = self.calc_node_state(name, xyz_size)  # compute new node state (recursively)
-            vals_to_return[n] = node_state
-            self.graph.nodes[name]["state"] = node_state
-
-        return vals_to_return
 
     def set_input_node_states(self, orig_size_xyz):
         input_x = np.zeros(orig_size_xyz)
@@ -92,25 +100,44 @@ class CPPN(Network):
                 self.graph.nodes[name]["state"] = input_b
                 self.graph.nodes[name]["evaluated"] = True
 
-    def calc_node_state(self, node_name, xyz_size):
-        """Propagate input values through the network"""
-        if self.graph.nodes[node_name]["evaluated"]:
-            return self.graph.nodes[node_name]["state"]
+    def mutate(self):
+        """
+        selects one mutation type to preform and executes it.
+        :return: (variation_degree, str: variation_type)
+        """
+        mut_type = random.randrange(6)
+        variation_degree = None
+        variation_type = None
 
-        self.graph.nodes[node_name]["evaluated"] = True
-        input_edges = self.graph.in_edges(nbunch=[node_name])
-        new_state = np.zeros(xyz_size)
+        if mut_type == 0:
+            variation_degree = self.add_node()
+            variation_type = "add_node"
 
-        for edge in input_edges:
-            node1, node2 = edge
-            new_state += self.calc_node_state(node1, xyz_size) * self.graph.edges[node1, node2]["weight"]
+        elif mut_type == 1:
+            variation_degree = self.remove_node()
+            variation_type = "remove_node"
 
-        self.graph.nodes[node_name]["state"] = new_state
+        elif mut_type == 2:
+            variation_degree = self.add_link()
+            variation_type = "add_link"
 
-        return new_state
+        elif mut_type == 3:
+            variation_degree = self.remove_link()
+            variation_type = "remove_link"
 
-    def mutate(self, num_random_node_adds=10, num_random_node_removals=0, num_random_link_adds=10,
-               num_random_link_removals=5, num_random_activation_functions=100, num_random_weight_changes=100):
+        elif mut_type == 4:
+            variation_degree = self.mutate_function()
+            variation_type = "mutate_function"
+
+        elif mut_type == 5:
+            variation_degree = self.mutate_weight()
+            variation_type = "mutate_weight"
+
+        self.prune_network()
+        return variation_type, variation_degree
+
+    def initialize(self, num_random_node_adds=10, num_random_node_removals=0, num_random_link_adds=10,
+                   num_random_link_removals=5, num_random_activation_functions=100, num_random_weight_changes=100):
 
         variation_degree = None
         variation_type = None
@@ -320,12 +347,13 @@ class CPPN(Network):
 
 
 class DirectEncoding(Network):
-    def __init__(self, orig_size_xyz, lower_bound=-1, upper_bound=1, func=None, symmetric=True,
+    def __init__(self, ouput_node_name, orig_size_xyz, lower_bound=-1, upper_bound=1, func=None, symmetric=True,
                  p=None, scale=None, start_val=None, mutate_start_val=False, allow_neutral_mutations=False,
                  sub_vox_dict=None, frozen_vox=None, patch_mode=False):
-
         if patch_mode:
             raise NotImplementedError("Patches are not implemented.")
+
+        Network.__init__(self, [ouput_node_name])
 
         self.direct_encoding = True
         self.allow_neutral_mutations = allow_neutral_mutations
@@ -373,9 +401,12 @@ class DirectEncoding(Network):
     def __str__(self):
         return str(self.values)
 
-    def express(self, xyz_size, *args, **kwargs):
-        assert xyz_size == self.size, "Direct encoding can only generate phenotypes of same shape as internal encoding"
-        return self.values
+    # def express(self, xyz_size, *args, **kwargs):
+    #     assert xyz_size == self.size, "Direct encoding can only generate phenotypes of same shape as internal encoding"
+    #     return self.values
+
+    def set_input_node_states(self, *args, **kwargs):
+        pass
 
     def mutate(self, rate=None):
 
