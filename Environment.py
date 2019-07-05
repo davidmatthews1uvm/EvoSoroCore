@@ -1,5 +1,6 @@
-from lxml import etree
 import numpy as np
+from lxml import etree
+
 
 class Env(object):
     """Container for VoxCad environment parameters."""
@@ -264,7 +265,7 @@ class Env(object):
             etree.SubElement(f_region, "Z").text = "0"
             etree.SubElement(f_region, "dX").text = "1"
             etree.SubElement(f_region, "dY").text = "1"
-            etree.SubElement(f_region, "dZ").text = str(self.hurdle_height/length_workspace_xyz[2])
+            etree.SubElement(f_region, "dZ").text = str(self.hurdle_height / length_workspace_xyz[2])
             etree.SubElement(f_region, "Radius").text = "0"
             etree.SubElement(f_region, "R").text = "0.4"
             etree.SubElement(f_region, "G").text = "0.6"
@@ -331,13 +332,14 @@ class Env(object):
         etree.SubElement(env_root, "TimeBetweenTraces").text = str(self.time_between_traces)
         etree.SubElement(env_root, "SavePassiveData").text = str(int(self.save_passive_data))
         etree.SubElement(env_root, "StickyFloor").text = str(self.sticky_floor)
-        etree.SubElement(env_root, "NeedleInHaystack").text =  str(int(self.needle_position > 0))
-        etree.SubElement(env_root, "ContractionOnly").text =  str(int(self.contraction_only))
-        etree.SubElement(env_root, "ExpansionOnly").text =  str(int(self.expansion_only))
-        etree.SubElement(env_root, "FluidEnvironment").text =  str(int(self.fluid_environment))
-        etree.SubElement(env_root, "AggregateDragCoefficient").text =  str(int(self.aggregate_drag_coefficient))
-        etree.SubElement(env_root, "IceRinkEnvironment").text =  str(int(self.ice_rink_environment))
-        etree.SubElement(env_root, "BioElectricsEnabled").text =  str(int(self.BioElectricsEnabled))
+        etree.SubElement(env_root, "NeedleInHaystack").text = str(int(self.needle_position > 0))
+        etree.SubElement(env_root, "ContractionOnly").text = str(int(self.contraction_only))
+        etree.SubElement(env_root, "ExpansionOnly").text = str(int(self.expansion_only))
+        etree.SubElement(env_root, "FluidEnvironment").text = str(int(self.fluid_environment))
+        etree.SubElement(env_root, "AggregateDragCoefficient").text = str(int(self.aggregate_drag_coefficient))
+        etree.SubElement(env_root, "IceRinkEnvironment").text = str(int(self.ice_rink_environment))
+        etree.SubElement(env_root, "BioElectricsEnabled").text = str(int(self.BioElectricsEnabled))
+
 
 class VXC_Wrapper(object):
     def __init__(self, lattice_dimension=0.01):

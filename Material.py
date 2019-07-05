@@ -1,4 +1,3 @@
-import random
 from lxml import etree
 
 
@@ -7,7 +6,8 @@ class Material(object):
     base class for materials.
     Please override if you need special attributes such as actuation or cilia
     """
-    def __init__(self, id, name="", elastic_mod=5000000, friction_static=1, friction_dynamic=0.5, density=1000000, color=(1,1,0,1), actuation_variance=0):
+
+    def __init__(self, id, name="", elastic_mod=5000000, friction_static=1, friction_dynamic=0.5, density=1000000, color=(1, 1, 0, 1), actuation_variance=0):
         self.id = id
         self.name = name
         self.elastic_mod = elastic_mod
@@ -15,6 +15,7 @@ class Material(object):
         self.friction_dynamic = friction_dynamic
         self.density = density
         self.color = color
+
     def write_to_xml(self, root, **kwargs):
         material_root = etree.SubElement(root, "Material", ID=str(self.id))
         etree.SubElement(material_root, "MatType").text = str(0)

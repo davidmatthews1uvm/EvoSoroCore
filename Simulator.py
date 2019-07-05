@@ -1,5 +1,6 @@
 from lxml import etree
 
+
 class Sim(object):
     """Container for VoxCad simulation parameters."""
 

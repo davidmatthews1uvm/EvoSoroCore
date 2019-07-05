@@ -1,16 +1,19 @@
-from lxml import etree
-import numpy as np
 import random
+
+import numpy as np
+from lxml import etree
+
 
 class Robot(object):
     """
     An example robot object. Please override me!
     """
+
     def __init__(self, morphology=None):
         if morphology is not None:
             self.morphology = morphology
         else:
-            self.morphology = np.ones(shape=(2,2,5))
+            self.morphology = np.ones(shape=(2, 2, 5))
             self.mutate()
 
     def get_body_xlim(self):
@@ -28,13 +31,13 @@ class Robot(object):
         :return:
         """
         # mutate one voxel: flip it's bit
-        x = random.randint(0, self.morphology.shape[0]-1)
-        y = random.randint(0, self.morphology.shape[1]-1)
-        z = random.randint(0, self.morphology.shape[2]-1)
-        if self.morphology[x,y,z]:
-            self.morphology[x,y,z] = 0
+        x = random.randint(0, self.morphology.shape[0] - 1)
+        y = random.randint(0, self.morphology.shape[1] - 1)
+        z = random.randint(0, self.morphology.shape[2] - 1)
+        if self.morphology[x, y, z]:
+            self.morphology[x, y, z] = 0
         else:
-            self.morphology[x,y,z] = 1
+            self.morphology[x, y, z] = 1
 
     def write_to_xml(self, root, **kwargs):
         structure = etree.SubElement(root, "Structure", Compression="ASCII_CSV")
@@ -47,4 +50,4 @@ class Robot(object):
 
         data = etree.SubElement(structure, "Data")
         for layer in range(self.morphology.shape[2]):
-            etree.SubElement(data, "Layer").text = etree.CDATA(', '.join([str(d) for d in self.morphology[:,:,layer].flatten()]))
+            etree.SubElement(data, "Layer").text = etree.CDATA(', '.join([str(d) for d in self.morphology[:, :, layer].flatten()]))
