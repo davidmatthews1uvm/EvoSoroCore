@@ -318,6 +318,9 @@ class Phenotype(object):
     def __str__(self):
         return '\n'.join([str(name) + ": " + str(details["state"]) for (name, details) in self.genotype.to_phenotype_mapping.items()])
 
+    def get_phenotype(self):
+        return self.genotype.to_phenotype_mapping.items()
+
     def mutate(self, max_mutation_attempts=1000):
         """
         Mutates the genotype and ensures that the mutation results in a valid phenotype.

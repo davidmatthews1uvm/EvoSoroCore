@@ -1,9 +1,9 @@
 from lxml import etree
 
-from Environment import Env, VXC_Wrapper
-from Material import Material
-from Robot import Robot
-from Simulator import Sim
+from evosorocore.Environment import Env, VXC_Wrapper
+from evosorocore.Material import Material
+from evosorocore.Robot import Robot
+from evosorocore.Simulator import Sim
 
 
 class Individual(object):
