@@ -103,9 +103,6 @@ class Env(object):
         self.expansion_only = expansion_only
 
     def write_to_xml(self, root, run_dir, individual):
-        print("writing Env to XML")
-
-
         body_xlim = (0, individual.get_body_xlim())
         body_ylim = (0, individual.get_body_ylim())
         body_zlim = ((self.hurdle_height + 1), individual.get_body_zlim() + (self.hurdle_height + 1))
@@ -369,4 +366,4 @@ class VXC_Wrapper(object):
         for material in material_pallette:
             material.write_to_xml(palette)
 
-        # robot.write_to_xml(VXC_root)
+        robot.write_to_xml(VXC_root)

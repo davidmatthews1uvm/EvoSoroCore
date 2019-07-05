@@ -7,7 +7,7 @@ class Material(object):
     base class for materials.
     Please override if you need special attributes such as actuation or cilia
     """
-    def __init__(self, id, name="", elastic_mod=0, friction_static=0, friction_dynamic=0, density=0, color=(1,1,0,1), actuation_variance=0):
+    def __init__(self, id, name="", elastic_mod=5000000, friction_static=1, friction_dynamic=0.5, density=1000000, color=(1,1,0,1), actuation_variance=0):
         self.id = id
         self.name = name
         self.elastic_mod = elastic_mod
