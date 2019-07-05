@@ -6,8 +6,8 @@ import networkx as nx
 import numpy as np
 from networkx import DiGraph
 
-from NetworkUtils import neg_abs, neg_sqrt_abs, neg_square, normalize, sigmoid, sqrt_abs
-from NetworkUtils import vox_xyz_from_id
+from evosorocore.NetworkUtils import neg_abs, neg_sqrt_abs, neg_square, normalize, sigmoid, sqrt_abs
+from evosorocore.NetworkUtils import vox_xyz_from_id
 
 
 class OrderedGraph(DiGraph):

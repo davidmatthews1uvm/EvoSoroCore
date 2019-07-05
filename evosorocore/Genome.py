@@ -3,8 +3,8 @@ from copy import deepcopy
 
 import numpy as np
 
-from NetworkUtils import sigmoid
-from Networks import Network
+from evosorocore.NetworkUtils import sigmoid
+from evosorocore.Networks import Network
 
 
 # from evosoro.tools.utils import sigmoid, xml_format, dominates
