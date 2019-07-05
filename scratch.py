@@ -7,6 +7,7 @@ from Robot import Robot
 class Individual(object):
     def __init__(self):
         pass
+
     def get_id(self):
         return 0
 
