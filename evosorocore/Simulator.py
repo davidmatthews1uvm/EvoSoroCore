@@ -1,3 +1,5 @@
+import random
+
 from lxml import etree
 
 
@@ -25,8 +27,10 @@ class Sim(object):
         self.max_elastic_mod = max_elastic_mod
         self.damp_evolved_stiffness = damp_evolved_stiffness
 
-    def write_to_xml(self, root, run_dir, individual):
+    def write_to_xml(self, root, run_dir, individual, fitness_file_str=None, **kwargs):
         sim_root = etree.SubElement(root, "Simulator")
+
+        etree.SubElement(sim_root, "Seed").text = str(random.random())
 
         integration = etree.SubElement(sim_root, "Integration")
         etree.SubElement(integration, "Integrator").text = "0"
@@ -66,7 +70,10 @@ class Sim(object):
 
         G_A = etree.SubElement(sim_root, "GA")
         etree.SubElement(G_A, "WriteFitnessFile").text = "1"
-        etree.SubElement(G_A, "FitnessFileName").text = "%s/fitnessFiles/softbotsOutput--id_%05i.xml" % (run_dir, individual.get_id())
+        if fitness_file_str is not None:
+            etree.SubElement(G_A, "FitnessFileName").text = fitness_file_str
+        else:
+            etree.SubElement(G_A, "FitnessFileName").text = "%s/fitnessFiles/softbotsOutput--id_%05i.xml" % (run_dir, individual.get_id())
         etree.SubElement(G_A, "QhullTmpFile").text = "%s/../_qhull/tempFiles/qhullInput--id_%05i.txt" % (run_dir, individual.get_id())
         etree.SubElement(G_A, "CurvaturesTmpFile").text = "%s/../_qhull/tempFiles/curvatures--id_%05i.txt" % (run_dir, individual.get_id())
 

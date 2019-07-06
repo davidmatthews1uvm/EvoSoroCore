@@ -175,7 +175,10 @@ class CPPN(Network):
 
     def add_node(self):
         # choose two random nodes (between which a link could exist)
-        assert len(self.graph.edges()) > 0, "Graph must have edges in order to add a node."
+        
+        if len(self.graph.edges()) == 0:
+            return "NoEdges"
+
         node1, node2 = random.choice(list(self.graph.edges()))
 
         # create a new node hanging from the previous output node

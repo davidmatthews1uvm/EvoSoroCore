@@ -103,7 +103,7 @@ class Env(object):
         self.contraction_only = contraction_only
         self.expansion_only = expansion_only
 
-    def write_to_xml(self, root, run_dir, individual):
+    def write_to_xml(self, root, run_dir, individual, **kwargs):
         body_xlim = (0, individual.get_body_xlim())
         body_ylim = (0, individual.get_body_ylim())
         body_zlim = ((self.hurdle_height + 1), individual.get_body_zlim() + (self.hurdle_height + 1))
