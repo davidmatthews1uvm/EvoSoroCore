@@ -55,7 +55,8 @@ def count_negative(x):
 
 def normalize(x):
     x -= np.min(x)
-    x /= np.max(x)
+    with np.errstate(divide='ignore', invalid='ignore'):
+        x /= np.max(x)
     x = np.nan_to_num(x)
     x *= 2
     x -= 1
@@ -65,7 +66,8 @@ def normalize(x):
 def normalize_scaled(x, new_min=0, new_max=1):
     x = np.nan_to_num(x)
     x -= np.min(x)
-    x /= np.max(x)
+    with np.errstate(divide='ignore', invalid='ignore'):
+        x /= np.max(x)
     x = np.nan_to_num(x)
     x = np.where(abs(x) > 1, 0, x)  # force to range 0, 1. (nan_to_num gives np.inf large values)
     new_spread = (new_max - new_min)

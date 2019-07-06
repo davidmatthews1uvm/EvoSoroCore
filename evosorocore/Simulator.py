@@ -59,7 +59,7 @@ class Sim(object):
         etree.SubElement(stop_condition, "StopConditionType").text = str(int(self.stop_condition))
         etree.SubElement(stop_condition, "StopConditionValue").text = str(self.simulation_time)
         etree.SubElement(stop_condition, "InitCmTime").text = str(self.fitness_eval_init_time)
-        etree.SubElement(stop_condition, "ActuationStartTime").text = str(self.fitness_eval_init_time)
+        etree.SubElement(stop_condition, "ActuationStartTime").text = str(self.actuation_start_time)
 
         equilibrium_mode = etree.SubElement(sim_root, "EquilibriumMode")
         etree.SubElement(equilibrium_mode, "EquilibriumModeEnabled").text = str(self.equilibrium_mode)
@@ -72,7 +72,7 @@ class Sim(object):
 
         etree.SubElement(sim_root, "MinTempFact").text = str(self.min_temp_fact)
         etree.SubElement(sim_root, "MaxTempFactChange").text = str(self.max_temp_fact_change)
-        etree.SubElement(sim_root, "DampEvolvedStiffness").text = str(self.damp_evolved_stiffness)
+        etree.SubElement(sim_root, "DampEvolvedStiffness").text = str(int(self.damp_evolved_stiffness))
         etree.SubElement(sim_root, "MaxStiffnessChange").text = str(self.max_stiffness_change)
         etree.SubElement(sim_root, "MinElasticMod").text = str(self.min_elastic_mod)
         etree.SubElement(sim_root, "MaxElasticMod").text = str(self.max_elastic_mod)

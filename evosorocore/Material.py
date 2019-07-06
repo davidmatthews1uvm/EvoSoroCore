@@ -7,7 +7,7 @@ class Material(object):
     Please override if you need special attributes such as actuation or cilia
     """
 
-    def __init__(self, id, name="", elastic_mod=5000000, friction_static=1, friction_dynamic=0.5, density=1000000, color=(1, 1, 0, 1)):
+    def __init__(self, id, name="", elastic_mod=5e6, friction_static=1, friction_dynamic=0.5, density=1e6, color=(1, 1, 0, 1)):
         self.id = id
         self.name = name
         self.elastic_mod = elastic_mod

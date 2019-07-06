@@ -327,7 +327,7 @@ class Env(object):
 
         etree.SubElement(env_root, "GrowthAmplitude").text = str(self.growth_amp)
         etree.SubElement(env_root, "GrowthSpeedLimit").text = str(self.growth_speed_limit)
-        etree.SubElement(env_root, "GreedyGrowth").text = str(self.greedy_growth)
+        etree.SubElement(env_root, "GreedyGrowth").text = str(int(self.greedy_growth))
         etree.SubElement(env_root, "GreedyThreshold").text = str(self.greedy_threshold)
         etree.SubElement(env_root, "TimeBetweenTraces").text = str(self.time_between_traces)
         etree.SubElement(env_root, "SavePassiveData").text = str(int(self.save_passive_data))

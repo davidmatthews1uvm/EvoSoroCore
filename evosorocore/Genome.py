@@ -301,12 +301,16 @@ class Phenotype(object):
         """
         Parameters
         ----------
-        genotype : Genotype()
+        genotype : Genotype cls
             Defines particular networks (the genome).
 
         """
-        self.genotype = genotype
+        self.genotype = genotype()
         self.genotype.express()
+
+        while not self.is_valid():
+            self.genotype = genotype()
+            self.genotype.express()
 
     def __deepcopy__(self, memo):
         """Override deepcopy to apply to class level attributes"""
