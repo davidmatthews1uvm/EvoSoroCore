@@ -94,3 +94,6 @@ class Sim(object):
                 etree.SubElement(sim_root, "ParentLifetime").text = str(individual.parent_lifetime)
             else:
                 etree.SubElement(sim_root, "ParentLifetime").text = str(individual.lifetime)
+
+
+        return sim_root

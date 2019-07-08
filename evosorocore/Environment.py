@@ -340,6 +340,8 @@ class Env(object):
         etree.SubElement(env_root, "IceRinkEnvironment").text = str(int(self.ice_rink_environment))
         etree.SubElement(env_root, "BioElectricsEnabled").text = str(int(self.BioElectricsEnabled))
 
+        return env_root
+
 
 class VXC_Wrapper(object):
     def __init__(self, lattice_dimension=0.01):
@@ -369,3 +371,5 @@ class VXC_Wrapper(object):
             material.write_to_xml(palette)
 
         robot.write_to_xml(VXC_root)
+
+        return VXC_root

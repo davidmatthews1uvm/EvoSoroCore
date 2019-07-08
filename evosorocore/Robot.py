@@ -51,3 +51,5 @@ class Robot(object):
         data = etree.SubElement(structure, "Data")
         for layer in range(self.morphology.shape[2]):
             etree.SubElement(data, "Layer").text = etree.CDATA(', '.join([str(d) for d in self.morphology[:, :, layer].flatten()]))
+
+        return structure
