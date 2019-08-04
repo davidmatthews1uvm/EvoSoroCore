@@ -1,5 +1,3 @@
-import random
-
 from lxml import etree
 
 
@@ -27,10 +25,10 @@ class Sim(object):
         self.max_elastic_mod = max_elastic_mod
         self.damp_evolved_stiffness = damp_evolved_stiffness
 
-    def write_to_xml(self, root, run_dir, individual, fitness_file_str=None, **kwargs):
+    def write_to_xml(self, root, run_dir, individual, fitness_file_str=None, seed=0, **kwargs):
         sim_root = etree.SubElement(root, "Simulator")
 
-        etree.SubElement(sim_root, "Seed").text = str(random.random())
+        etree.SubElement(sim_root, "Seed").text = str(seed)
 
         integration = etree.SubElement(sim_root, "Integration")
         etree.SubElement(integration, "Integrator").text = "0"
