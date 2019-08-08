@@ -7,7 +7,7 @@ class Material(object):
     Please override if you need special attributes such as actuation or cilia
     """
 
-    def __init__(self, id, name="", elastic_mod=5e6, friction_static=1, friction_dynamic=0.5, density=1e6, color=(1, 1, 0, 1)):
+    def __init__(self, id, name="", elastic_mod=5e6, friction_static=1, friction_dynamic=0.5, density=1e6, CTE=0, color=(1, 1, 0, 1)):
         self.id = id
         self.name = name
         self.elastic_mod = elastic_mod
@@ -15,6 +15,7 @@ class Material(object):
         self.friction_dynamic = friction_dynamic
         self.density = density
         self.color = color
+        self.CTE = CTE
 
     def write_to_xml(self, root, **kwargs):
         """
@@ -44,7 +45,7 @@ class Material(object):
         etree.SubElement(mechanical, "Fail_Strain").text = "0"
         etree.SubElement(mechanical, "Density").text = str(self.density)
         etree.SubElement(mechanical, "Poissons_Ratio").text = "0.35"
-        etree.SubElement(mechanical, "CTE").text = "0"
+        etree.SubElement(mechanical, "CTE").text = str(CTE)
         etree.SubElement(mechanical, "uStatic").text = str(self.friction_static)
         etree.SubElement(mechanical, "uDynamic").text = str(self.friction_dynamic)
 
