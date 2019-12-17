@@ -45,7 +45,7 @@ class Material(object):
         etree.SubElement(mechanical, "Fail_Strain").text = "0"
         etree.SubElement(mechanical, "Density").text = str(self.density)
         etree.SubElement(mechanical, "Poissons_Ratio").text = "0.35"
-        etree.SubElement(mechanical, "CTE").text = str(CTE)
+        etree.SubElement(mechanical, "CTE").text = str(self.CTE)
         etree.SubElement(mechanical, "uStatic").text = str(self.friction_static)
         etree.SubElement(mechanical, "uDynamic").text = str(self.friction_dynamic)
 
