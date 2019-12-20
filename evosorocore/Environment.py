@@ -6,9 +6,8 @@ class Env(object):
     """Container for VoxCad environment parameters."""
 
     def __init__(self, frequency=4.0, gravity_enabled=1, grav_acc=-9.81, density=1e+006, temp_enabled=1,
-                 floor_enabled=1, floor_slope=0.0, lattice_dimension=0.01, fat_stiffness=5e+006, bone_stiffness=5e+008,
-                 muscle_stiffness=5e+006, sticky_floor=0, time_between_traces=0, save_passive_data=False,
-                 actuation_variance=0, temp_amp=39, growth_amp=0, growth_speed_limit=0,
+                 floor_enabled=1, floor_slope=0.0, lattice_dimension=0.01, sticky_floor=0, time_between_traces=0, save_passive_data=False,
+                 actuation_variance=0, temp_amp=39, temp_base=25, vary_temp_enabled=1, growth_amp=0, growth_speed_limit=0,
                  greedy_growth=False, greedy_threshold=0, squeeze_rate=0, constant_squeeze=False, squeeze_start=0.5,
                  squeeze_end=2, num_hurdles=0, space_between_hurdles=3, hurdle_height=1, hurdle_stop=np.inf,
                  circular_hurdles=False, tunnel_width=8, forward_hurdles_only=True, wall_height=3, back_stop=False,
@@ -24,17 +23,17 @@ class Env(object):
 
         self.sub_groups = ["Fixed_Regions", "Forced_Regions", "Gravity", "Thermal"]
 
+
         self.frequency = frequency
         self.gravity_enabled = gravity_enabled
         self.grav_acc = grav_acc
         self.density = density
         self.floor_enabled = floor_enabled
         self.temp_enabled = temp_enabled
+        self.vary_temp_enabled = vary_temp_enabled
+        self.temp_base = temp_base
         self.floor_slope = floor_slope
-        self.lattice_dimension = lattice_dimension  # TODO: remove this (it is in Material)
-        self.muscle_stiffness = muscle_stiffness  # TODO: remove this (it is in Material)
-        self.bone_stiffness = bone_stiffness  # TODO: remove this (it is in Material)
-        self.fat_stiffness = fat_stiffness  # TODO: remove this (it is in Material)
+
         self.sticky_floor = sticky_floor
         self.time_between_traces = time_between_traces
         self.save_passive_data = save_passive_data
@@ -291,16 +290,16 @@ class Env(object):
             etree.SubElement(f_regions, "NumForced").text = "0"
 
         gravity = etree.SubElement(env_root, "Gravity")
-        etree.SubElement(gravity, "GravEnabled").text = str(self.gravity_enabled)
+        etree.SubElement(gravity, "GravEnabled").text = str(int(self.gravity_enabled))
         etree.SubElement(gravity, "GravAcc").text = str(self.grav_acc)
-        etree.SubElement(gravity, "FloorEnabled").text = str(self.floor_enabled)
+        etree.SubElement(gravity, "FloorEnabled").text = str(int(self.floor_enabled))
         etree.SubElement(gravity, "FloorSlopw").text = str(self.floor_slope)
 
         thermal = etree.SubElement(env_root, "Thermal")
-        etree.SubElement(thermal, "TempEnabled").text = str(self.temp_enabled)
+        etree.SubElement(thermal, "TempEnabled").text = str(int(self.temp_enabled))
         etree.SubElement(thermal, "TempAmp").text = str(self.temp_amp)
-        etree.SubElement(thermal, "TempBase").text = "25"
-        etree.SubElement(thermal, "VaryTempEnabled").text = "1"
+        etree.SubElement(thermal, "TempBase").text = str(self.temp_base)
+        etree.SubElement(thermal, "VaryTempEnabled").text = str(int(self.vary_temp_enabled))
         etree.SubElement(thermal, "TempPeriod").text = str(1.0 / self.frequency)
 
         light_source = etree.SubElement(env_root, "LightSource")
