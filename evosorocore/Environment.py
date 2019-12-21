@@ -293,7 +293,7 @@ class Env(object):
         etree.SubElement(gravity, "GravEnabled").text = str(int(self.gravity_enabled))
         etree.SubElement(gravity, "GravAcc").text = str(self.grav_acc)
         etree.SubElement(gravity, "FloorEnabled").text = str(int(self.floor_enabled))
-        etree.SubElement(gravity, "FloorSlopw").text = str(self.floor_slope)
+        etree.SubElement(gravity, "FloorSlope").text = str(self.floor_slope)
 
         thermal = etree.SubElement(env_root, "Thermal")
         etree.SubElement(thermal, "TempEnabled").text = str(int(self.temp_enabled))

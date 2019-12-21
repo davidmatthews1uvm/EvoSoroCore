@@ -37,7 +37,6 @@ class Sim(object):
         damping = etree.SubElement(sim_root, "Damping")
         etree.SubElement(damping, "BondDampingZ").text = "1"
         etree.SubElement(damping, "ColDampingZ").text = "0.8"
-        etree.SubElement(damping, "ColDampingZ").text = "0.8"
         etree.SubElement(damping, "SlowDampingZ").text = "0.01"
 
         collisions = etree.SubElement(sim_root, "Collisions")
