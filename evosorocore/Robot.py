@@ -17,13 +17,13 @@ class Robot(object):
             self.mutate()
 
     def get_body_xlim(self):
-        return 2
+        return self.morphology.shape[0]
 
     def get_body_ylim(self):
-        return 2
+        return self.morphology.shape[1]
 
     def get_body_zlim(self):
-        return 5
+        return self.morphology.shape[2]
 
     def mutate(self):
         """
